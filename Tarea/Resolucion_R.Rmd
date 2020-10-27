@@ -1,0 +1,214 @@
+---
+title: "Resolucion-R"
+author: "Cristian Sáez Mardones"
+date: "27-10-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Ejercicio 1
+
+```{r}
+A = rbind(
+  c(10, 2, -1, 1, 0, 10),
+  c(-1, -3, 0, 0, -1, 5),
+  c(0, -1, 3, -1, 0, 0),
+  c(17, 1, 0, 3, 5, -15),
+  c(0,-10, 0, -5, 3, 0),
+  c(-3, 1, 1, 1, -2, 2)
+)
+b = c(0, 5, 5, 4, -21, 11)
+AB = cbind(A, b)
+
+n.variables = 6
+
+# Comprobamos si los rangos son iguales
+qr(A)$rank == qr(AB)$rank
+# Comprobamos si el rango es igual al número de variables
+qr(A)$rank == n.variables
+```
+
+Ya que el rango de la matriz ampliada es igual al de la matriz de coeficientes y a su vez, es igual al número de variables, según el **Teorema de Rouché-Frobenius**, se trata de un sistema compatible determinado.
+
+### Resolución dels sistema
+
+```{r}
+library(matlib)
+Solve(A, b)
+```
+
+Con esto tenemos que la solución es:
+
+$$x_{1}\ =\ 0,\ x_{2}\ =\ -1,\ x_{3}\ =\ 3,\ x_{4}\ =\ 5,\ x_{5}\ =\ -2,\ x_{6}\ =\ 0$$
+
+***
+
+# Ejercicio 2
+
+```{r}
+A = rbind(
+  c(-2, 2, -1, 1, 0, 4, 0),
+  c(-1, -3, 0, 0, -1, 5, -2),
+  c(0, -1, 3, -1, 0, 0, 0),
+  c(0, 1, 0, 3, -2, 1, 4),
+  c(0, -3, 0, -5, 3, 0, -2),
+  c(-3, 1, 1, 1, -2, 2, 1)
+)
+b = c(5, 3, 5, 0, 5, 0)
+AB = cbind(A, b)
+
+n.variables = 7
+
+AB
+
+# Comprobamos si los rangos son iguales
+qr(A)$rank == qr(AB)$rank
+# Comprobamos si el rango es igual al número de variables
+qr(A)$rank == n.variables
+```
+
+Ya que el rango de la matriz ampliada es igual al de la matriz de coeficientes, pero el rango es menor al número de variables, mediante el **Teorema de Rouché-Frobenius** podemos afirmar que se trata de un sistema compatible indeterminado.
+
+Calculamos las soluciones:
+
+```{r}
+Solve(A, b, fractions=TRUE)
+```
+
+Lo que nos da como solución:
+
+$$x_{1}\ =\ \frac{467}{7} - \frac{621\ \cdot\ x_{7}}{7}$$
+
+$$x_{2}\ =\ \frac{383}{7} - \frac{509\ \cdot\ x_{7}}{7}$$
+
+$$x_{3}\ =\ -\frac{149}{14} + \frac{233\ \cdot\ x_{7}}{14}$$
+
+$$x_{4}\ =\ -\frac{1283}{14} + \frac{1717\ \cdot\ x_{7}}{14}$$
+
+$$x_{5}\ =\ -\frac{1349}{14} + \frac{1853\ \cdot\ x_{7}}{14}$$
+
+$$x_{6}\ =\ \frac{55}{2} - \frac{69\ \cdot\ x_{7}}{2}$$
+
+$$x_{7}\ \in\ \mathbb{R}$$
+
+***
+
+# Ejercicio 3
+
+```{r}
+A = rbind(
+  c(10, 2, -1, 1, 0, 10),
+  c(-1, -3, 0, 0, -1, 5),
+  c(9, -1, -1, 1, -1, 15),
+  c(17, 1, 0, 3, 5, -15),
+  c(0, -10, 0, -5, 3, 0),
+  c(-3, 1, 1, 1, -2, 2)
+)
+b = c(0, 5, 0, 4, -21, 11)
+AB = cbind(A, b)
+
+n.variables = 6
+
+AB
+
+# Comprobamos si los rangos son iguales
+qr(A)$rank == qr(AB)$rank
+# Comprobamos si el rango es igual al número de variables
+qr(A)$rank == n.variables
+```
+
+Comprobamos los rangos de las matrices
+
+```{r}
+qr(A)$rank
+qr(AB)$rank
+```
+
+Como el rango de la matriz ampliada es distinto al de la matriz de coeficientes, y además, el rango de la matriz de coeficientes es distinto al número de variables, mediante el **Teorema de Rouché-Frobenius** podemos afirmar que se trata de un sistema incompatible.
+
+Esto lo podemos comprobar haciendo uso de la función **Solve**
+
+```{r}
+library(matlib)
+Solve(A, b, fractions=TRUE)
+```
+
+La última linea nos muestra $0\ =\ 5$, lo que es una desigualdad, la cual nos muestra que se trata de un sistema incompatible.
+
+***
+
+# Ejercicio 4
+
+### Apartado a
+
+$$AX\ +\ 3B\ =\ -5X$$
+
+$$AX\ +\ 5X\ =\ -3B$$
+
+$$X(A\ +\ 5\ \cdot\ I_{2})\ =\ -3B$$
+
+Buscamos el valor de $X$
+
+```{r}
+A = rbind(c(-6, -3), c(0, -3))
+B = rbind(c(-1, 0), c(4, -2))
+I = diag(1, nrow=2, ncol=2)
+
+M = A + 5 * I
+N = -3 * B
+
+X = solve(M, N)
+X
+```
+
+Comprobamos el resultado
+
+```{r}
+A %*% X + 3 * B == -5 * X
+```
+
+### Apartado b
+
+$$ACX\ +\ 3B\ =\ 10I_{2}\ -\ X$$
+
+$$ACX\ +\ X\ =\ 10I_{2}\ -\ 3B$$
+
+$$X(AC\ +\ I_{2})\ =\ 10I_{2}\ -\ 3B$$
+
+Buscamos el valor de $X$
+
+```{r}
+A = rbind(c(1, 2), c(0, 2))
+B = rbind(c(2, -1), c(-1, 5))
+C = rbind(c(2, 6), c(-1, -0.5))
+I = diag(1, nrow=2, ncol=2)
+
+M = A %*% C + I
+N = 10 * I - 3 * B
+
+X = solve(M, N)
+X
+```
+
+Comprobamos el resultado
+
+```{r}
+A %*% C %*% X + 3 * B == 10 * I - X
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
